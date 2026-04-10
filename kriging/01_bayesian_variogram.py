@@ -188,7 +188,7 @@ def main():
 
     # Panel B: Trace plot for range (top-right)
     ax_trace = fig.add_subplot(gs[0, 2])
-    n_chains = trace.posterior.dims["chain"]
+    n_chains = trace.posterior.sizes["chain"]
     for chain in range(n_chains):
         ax_trace.plot(trace.posterior["range"].values[chain],
                       alpha=0.7, lw=0.6, label=f"Chain {chain}")
