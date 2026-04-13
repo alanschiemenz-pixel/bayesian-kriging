@@ -79,7 +79,7 @@ def spherical_variogram_pt(h, nugget, sill, range_):
 def main():
     # ── 1. Simulate synthetic drill-hole data ──────────────────────────────
     # True variogram: spherical, nugget=0.05, sill=0.8, range=120 m
-    np.random.seed(42)
+    np.random.seed(41)
     N = 60
     TRUE_NUGGET, TRUE_SILL, TRUE_RANGE = 0.05, 0.80, 120.0
 
