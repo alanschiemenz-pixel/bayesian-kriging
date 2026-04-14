@@ -64,7 +64,7 @@ scatter_plot(df_scaled, "iso_anomaly")
 # %% halo effect on Cu (point data, KDTree radius search)
 from scipy.spatial import KDTree
 
-RADIUS = 500   # metres -- tune to your deposit scale
+RADIUS = 1250   # metres -- tune to your deposit scale
 
 tree = KDTree(df_scaled[["x", "y"]].values)
 cu   = df_scaled["Cu"].values
@@ -84,3 +84,29 @@ df_scaled["Cu_halo_contrast"] = halo - cu
 
 scatter_plot(df_scaled, "Cu_halo")
 scatter_plot(df_scaled, "Cu_halo_contrast")
+
+
+# %% drilling candidates
+# consider 3 different effects for anomalies
+# 1) do we see a spatial halo?
+# 2) is there multivariate co-occurence?
+# 3) are magnitudes high?
+
+df_scaled["drilling_score"] = (
+    (df_scaled["Cu_halo_contrast"] < -1).astype('int')+
+    (df_scaled["Cu"] > 1).astype('int')+
+    (df_scaled["anomaly_score"] > 1).astype('int')
+    
+    )
+
+scatter_plot(df_scaled[df_scaled['near_drill']==0],'drilling_score')
+
+df_drilling = df_scaled[(df_scaled['drilling_score']>1) & (df_scaled['anomaly_score']>1)]
+
+df_drilling.sort_values(["drilling_score", "anomaly_score"], ascending=[False, False]).head(10).to_csv("./output.csv")
+
+# %% look for isolated anomalies -- could be data error
+
+df_out = df_scaled[(df_scaled["Cu"]>2)&(df_scaled["anomaly_score"]==1)][["x","y","anomaly","anomaly_score","Cu","Cu_halo_contrast"]]
+df_out.to_clipboard()
+
